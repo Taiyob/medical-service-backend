@@ -1,0 +1,479 @@
+---------------------------------------PICK FUNCTION---------------------------------------------------
+You said:
+const pick = <T extends Record<string, unknown>, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Partial<T> => {
+  const finalObj: Partial<T> = {};
+
+  for (const key of keys) {
+    if (obj && Object.hasOwnProperty.call(obj, key)) {
+      finalObj[key] = obj[key];
+    }
+  }
+  return finalObj;
+};
+
+export default pick;
+
+I do not understand this pick fuction. Please describe it in bangla language.
+I use pick fuction into here:
+import { Request, Response } from "express";
+import { AdminService } from "./admin.service";
+import pick from "../../../shared/pick";
+
+const getAllAdminFromDB = async (req: Request, res: Response) => {
+  try {
+    const filters = pick(req.query, [
+      "name",
+      "email",
+      "searchTerm",
+      "contactNumber",
+    ]);
+
+    const result = await AdminService.getAllAdmin(filters);
+
+    res.status(200).json({
+      success: true,
+      message: "All Admin retrives successfully!!!",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "All Admin retrives successfully!!!",
+      error: error,
+    });
+  }
+};
+
+export const AdminController = { getAllAdminFromDB };
+ChatGPT said:
+📌 pick ফাংশনটি কী করে?
+pick ফাংশনটি একটি অবজেক্ট থেকে নির্দিষ্ট কিছু কী-এর মান বের করে নতুন একটি অবজেক্ট তৈরি করে।
+
+💡 সহজ ভাষায় ব্যাখ্যা:
+ধরো, তোমার কাছে এই req.query অবজেক্টটি আছে:
+
+js
+Copy
+Edit
+const reqQuery = {
+  name: "John Doe",
+  email: "john@example.com",
+  searchTerm: "admin",
+  contactNumber: "1234567890",
+  age: 30,
+  address: "Dhaka",
+};
+এখন, তুমি শুধু "name", "email", "searchTerm", এবং "contactNumber" এই ৪টি ফিল্ড রাখতে চাও, আর বাকি গুলো বাদ দিতে চাও।
+
+👉 তখন তুমি pick ফাংশন ব্যবহার করতে পারো:
+
+js
+Copy
+Edit
+const filters = pick(reqQuery, ["name", "email", "searchTerm", "contactNumber"]);
+console.log(filters);
+📌 আউটপুট হবে:
+
+js
+Copy
+Edit
+{
+  name: "John Doe",
+  email: "john@example.com",
+  searchTerm: "admin",
+  contactNumber: "1234567890"
+}
+👉 বাকি ফিল্ড গুলো (age, address) বাদ গেছে! ✅
+
+📌 pick ফাংশন কিভাবে কাজ করে?
+ts
+Copy
+Edit
+const pick = <T extends Record<string, unknown>, K extends keyof T>(
+  obj: T, // পুরাতন অবজেক্ট
+  keys: K[] // যে কী-গুলা রাখতে চাও তার লিস্ট
+): Partial<T> => {
+  const finalObj: Partial<T> = {}; // নতুন অবজেক্ট
+  
+  for (const key of keys) {
+    if (obj && Object.hasOwnProperty.call(obj, key)) {
+      finalObj[key] = obj[key]; // শুধু নির্দিষ্ট কী-গুলোর মান রাখছে
+    }
+  }
+  return finalObj;
+};
+🔹 obj: T ➝ পুরাতন অবজেক্ট
+🔹 keys: K[] ➝ কোন কোন কী-গুলো রাখতে চাও তার লিস্ট
+🔹 finalObj[key] = obj[key] ➝ শুধু নির্দিষ্ট কী-গুলোর মান রাখছে
+
+📌 pick ফাংশন কিভাবে getAllAdminFromDB ফাংশনে ব্যবহার হয়েছে?
+js
+Copy
+Edit
+const filters = pick(req.query, ["name", "email", "searchTerm", "contactNumber"]);
+✅ এখানে pick ফাংশন req.query থেকে শুধুমাত্র এই ৪টি কী নিচ্ছে:
+👉 name, email, searchTerm, এবং contactNumber।
+✅ তারপর এই ফিল্টার করা ডাটা AdminService.getAllAdmin(filters)-এ পাঠানো হচ্ছে।
+
+🚀 সংক্ষেপে pick ফাংশনের কাজ:
+req.query-তে অনেক গুলো ফিল্ড থাকে।
+
+আমরা শুধু কিছু নির্দিষ্ট ফিল্ড রাখতে চাই।
+
+pick ফাংশন দিয়ে শুধু দরকারি ফিল্ড ফিল্টার করা হয়।
+
+ফিল্টার করা অবজেক্ট AdminService.getAllAdmin(filters)-এ পাঠানো হয়।
+
+✅ pick ফাংশন কেন দরকার?
+✔️ অপ্রয়োজনীয় ডাটা বাদ দিতে সাহায্য করে।
+✔️ শুধু নির্দিষ্ট ডাটা ফিল্টার করে API-তে পাঠানো যায়।
+✔️ সার্ভারে কম ডাটা পাঠায়, পারফরম্যান্স ভালো হয়।
+
+💡 আরও পরিষ্কার করার জন্য 🔥
+তুমি getAllAdminFromDB ফাংশনের মধ্যে নিচের লাইনটি লিখে req.query এবং filters দেখতে পারো:
+
+js
+Copy
+Edit
+console.log("Original Query:", req.query);
+console.log("Filtered Data:", filters);
+🔹 যদি তোমার req.query হয়:
+
+js
+Copy
+Edit
+{ name: "Alice", email: "alice@gmail.com", age: 25, location: "USA" }
+🔹 তাহলে pick করার পর filters হবে:
+
+js
+Copy
+Edit
+{ name: "Alice", email: "alice@gmail.com" }
+বাকি age ও location বাদ যাবে! 🚀
+
+🔹 এখন কি পরিষ্কার? যদি কোনো প্রশ্ন থাকে, বলো! 😊
+
+
+
+
+
+
+You said:
+if (obj && Object.hasOwnProperty.call(obj, key)) {
+      finalObj[key] = obj[key];
+    }
+ eta bujtesi na
+onk jotil lagtese, ki hoise eikhane?
+
+key er value ki eikhane?
+eikhane key diye to sodhu key gola dora hoise, naki?
+tahole value kmne pailo?
+ChatGPT said:
+চল একটু সহজ করে দেখি, obj && Object.hasOwnProperty.call(obj, key) এই লাইনটা আসলে কি করছে।
+
+📌 ধাপে ধাপে ব্যাখ্যা:
+js
+Copy
+Edit
+if (obj && Object.hasOwnProperty.call(obj, key)) {
+  finalObj[key] = obj[key];
+}
+👉 এখানে প্রথমে if কন্ডিশন চেক হচ্ছে:
+✅ obj সত্য কিনা (মানে অবজেক্ট আসলেই আছে কিনা)
+✅ obj-এর মধ্যে key নামে কোনো প্রপার্টি আছে কিনা
+
+🔍 বাস্তব উদাহরণ দেই:
+👉 ধরো, তোমার কাছে এই অবজেক্ট আছে:
+
+js
+Copy
+Edit
+const person = {
+  name: "John",
+  email: "john@example.com",
+  age: 30
+};
+এখন তুমি pick(person, ["name", "email"]) কল করলে, key এর ভ্যালু একবার "name" হবে, তারপর "email" হবে।
+
+🚀 কিভাবে pick কাজ করছে?
+js
+Copy
+Edit
+for (const key of keys) {
+  console.log("Key:", key); // key একবার "name", একবার "email"
+  
+  if (person && Object.hasOwnProperty.call(person, key)) {
+    console.log("Value:", person[key]); // প্রথমবার "John", দ্বিতীয়বার "john@example.com"
+    finalObj[key] = person[key];
+  }
+}
+👉 প্রথম লুপ:
+🔹 key = "name"
+🔹 person["name"] = "John"
+🔹 ✅ Object.hasOwnProperty.call(person, "name") সত্য
+🔹 finalObj["name"] = "John"`
+
+👉 দ্বিতীয় লুপ:
+🔹 key = "email"
+🔹 person["email"] = "john@example.com"
+🔹 ✅ Object.hasOwnProperty.call(person, "email") সত্য
+🔹 finalObj["email"] = "john@example.com"`
+
+📌 তাহলে Object.hasOwnProperty.call(obj, key) কেন দরকার?
+🚀 এটা নিশ্চিত করে যে obj আসলেই এই key টি নিজের প্রপার্টি হিসেবে আছে কিনা!
+কারণ, কিছু ক্ষেত্রে obj[key] অ্যাক্সেস করলে ভুল হতে পারে।
+
+🔹 যদি obj এ ওই key না থাকে, তাহলে undefined পাবে।
+🔹 কিছু built-in অবজেক্টে সমস্যা এড়ানোর জন্য এটি ভালো পদ্ধতি।
+
+💡 চূড়ান্ত ব্যাখ্যা:
+✔️ for (const key of keys) ⏩ লুপ করে keys এর ভেতরের প্রতিটি কী নেয়
+✔️ Object.hasOwnProperty.call(obj, key) ⏩ চেক করে obj-এ সত্যিই ওই কী আছে কিনা
+✔️ finalObj[key] = obj[key] ⏩ ওই কী-এর ভ্যালু নতুন অবজেক্টে সেট করে
+
+👉 সরাসরি দেখে বোঝার জন্য এইটা চালাও:
+js
+Copy
+Edit
+const person = {
+  name: "John",
+  email: "john@example.com",
+  age: 30
+};
+
+const keys = ["name", "email", "contactNumber"];
+
+for (const key of keys) {
+  console.log("Key:", key);
+  console.log("Has key?", Object.hasOwnProperty.call(person, key));
+  console.log("Value:", person[key]);
+}
+👉 আউটপুট:
+
+vbnet
+Copy
+Edit
+Key: name
+Has key? true
+Value: John
+
+Key: email
+Has key? true
+Value: john@example.com
+
+Key: contactNumber
+Has key? false
+Value: undefined
+✔️ "contactNumber" নেই, তাই false এসেছে! 🛑
+✔️ "name" ও "email" আছে, তাই তাদের ভ্যালু পাওয়া গেছে! ✅
+
+🔹 এখন কি পরিষ্কার? যদি কোনো জায়গায় সমস্যা থাকে, বলো! 😊
+
+-----------------------------------------------FILTERING------------------------------------------------
+if (Object.keys(filterData).length > 0) {
+    console.dir(Object.keys(filterData), { depth: Infinity });
+
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: filterData[key],
+        },
+      })),
+    });
+  }
+
+from console I found
+Server is runnning on port: 3000 
+[ 'email' ]
+
+I do not understand this line:
+equals: filterData[key],
+
+jodi Object.keys(filterData) = [ 'email' ] hoi,
+tahole etake map korle ei email er value kotha theke ase?
+[key]: {
+          equals: filterData[key],
+        },
+eikhane key er mooddhe to email e ase, tai na?
+tahole, filterData[key]----- er moddhe je key likha holo, ete to email ase just, email er value- jannat@gmail.com eta to nai,
+to ei value kon jaiga theke ana hocche match er jonno?
+
+
+ChatGPT said:
+Excellent question! Let's break this down step by step. 👇
+
+Understanding Object.keys(filterData)
+From your console log:
+
+js
+Copy
+Edit
+Object.keys(filterData) = [ 'email' ]
+That means filterData is an object where one of its keys is 'email'.
+So, if we print filterData, it might look something like:
+
+js
+Copy
+Edit
+filterData = { email: "jannat@gmail.com" }
+Breaking Down the map Function
+Now, let's analyze this part of your code:
+
+js
+Copy
+Edit
+Object.keys(filterData).map((key) => ({
+  [key]: {
+    equals: filterData[key],
+  },
+}));
+Object.keys(filterData) → returns ["email"], so the .map() function will iterate over this array.
+
+In the first (and only) iteration:
+
+key = "email"
+
+filterData[key] → Since filterData["email"] exists in filterData, it returns "jannat@gmail.com".
+
+Thus, after executing .map(), the output would be:
+
+js
+Copy
+Edit
+[
+  {
+    email: {
+      equals: "jannat@gmail.com",
+    },
+  },
+]
+So, How Does filterData[key] Work?
+filterData[key] is dynamically accessing the value of the key from the filterData object.
+
+Since key = "email", it's the same as writing:
+
+js
+Copy
+Edit
+filterData["email"] // returns "jannat@gmail.com"
+So the final query is built dynamically:
+
+js
+Copy
+Edit
+{
+  email: {
+    equals: "jannat@gmail.com"
+  }
+}
+Final Answer:
+The value "jannat@gmail.com" comes from the filterData object, where filterData.email = "jannat@gmail.com".
+
+🔹 The key "email" is first extracted using Object.keys(filterData).
+🔹 Then, inside the .map(), filterData[key] fetches "jannat@gmail.com" dynamically.
+
+Quick Debugging Tip:
+If you're ever confused about what's inside filterData, add this:
+
+js
+Copy
+Edit
+console.log("Filter Data:", filterData);
+console.log("Accessing key:", key, "Value:", filterData[key]);
+This will clearly show where values are coming from. 🚀
+
+I hope this makes sense! Let me know if you need further clarification. 😊
+
+
+
+
+
+
+You said:
+console.log("Filter Data:", filterData);
+console.log("Accessing key:", key, "Value:", filterData[key]);
+
+where can I write these?
+
+
+ChatGPT said:
+You should place these console.log statements inside the .map() function, right before returning the object.
+
+Modify your code like this:
+js
+Copy
+Edit
+if (Object.keys(filterData).length > 0) {
+    console.dir(Object.keys(filterData), { depth: Infinity });
+
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => {
+        // Debugging logs
+        console.log("Filter Data:", filterData);
+        console.log("Accessing key:", key, "Value:", filterData[key]);
+
+        return {
+          [key]: {
+            equals: filterData[key],
+          },
+        };
+      }),
+    });
+}
+What Will Happen?
+When your function runs, it will print something like:
+
+css
+Copy
+Edit
+Filter Data: { email: 'jannat@gmail.com' }
+Accessing key: email Value: jannat@gmail.com
+This helps you verify that filterData[key] is correctly getting the value from the object.
+
+When Should You Check the Logs?
+Run your API request from Postman again.
+
+Check your server terminal/console (where your Node.js app is running).
+
+Look at the logs to confirm that the correct values are being accessed.
+
+This will help identify if filterData is structured as expected or if there's an issue with how it's being processed. 🚀
+
+Let me know if you have any issues! 😊
+
+--------------------------------------------------------------------------
+1. 15 minutes in milliseconds:
+1 minute = 60 seconds
+
+1 second = 1000 milliseconds
+
+15 minutes = 15 × 60 × 1000 = 900,000 milliseconds
+
+So, 900,000 milliseconds represents 15 minutes.
+
+2. 2 days in milliseconds:
+1 day = 24 hours = 24 × 60 × 60 × 1000 = 86,400,000 milliseconds
+
+2 days = 2 × 86,400,000 = 172,800,000 milliseconds
+
+Now, to summarize:
+For 15 minutes: You should use 900,000 milliseconds.
+
+For 2 days: You should use 172,800,000 milliseconds.
+-------------------------------------------------------------------------------
+PS D:\react_course\typescript-technocraft\database\ph-health-care> node
+Welcome to Node.js v22.12.0.
+Type ".help" for more information.
+> require('crypto').createHash('sha256').digest('hex'))
+require('crypto').createHash('sha256').digest('hex'))
+                                                    ^
+
+Uncaught SyntaxError: Unexpected token ')'
+> require('crypto').createHash('sha256').digest('hex')
+'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+>
+(To exit, press Ctrl+C again or Ctrl+D or type .exit)
+>
