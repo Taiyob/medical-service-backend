@@ -5,6 +5,8 @@ import route from "./app/routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFoundError from "./app/middlewares/notFoundError";
 import cookieParser from "cookie-parser";
+import { AppointmentService } from "./app/modules/Appointment/appointment.service";
+import cron from "node-cron";
 
 const app: Application = express();
 
@@ -14,6 +16,15 @@ dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+cron.schedule("* * * * *", () => {
+  try {
+    AppointmentService.cancelUnpaidAppointment();
+    console.log("From cron node");
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send({

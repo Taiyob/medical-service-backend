@@ -26,4 +26,10 @@ route.get(
   AppointMentController.getAllAppointmentFromDB
 );
 
+route.patch(
+  "/status/:id",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+  AppointMentController.changeAppointmentStatusFromDB
+);
+
 export const AppointmentRoute = route;
