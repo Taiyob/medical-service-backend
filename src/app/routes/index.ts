@@ -10,6 +10,8 @@ import { DoctorScheduleRoute } from "../modules/DoctorSchedule/doctorSchedule.ro
 import { AppointmentRoute } from "../modules/Appointment/appointment.route";
 import { PaymentRoute } from "../modules/Payment/payment.route";
 import { PrescriptionRoute } from "../modules/Prescription/prescription.route";
+import { ReviewRoute } from "../modules/Review/review.route";
+import { MetaRoute } from "../modules/meta/meta.route";
 
 const route = express.Router();
 
@@ -57,6 +59,14 @@ const moduleRoutes = [
   {
     path: "/prescription",
     route: PrescriptionRoute,
+  },
+  {
+    path: "/review",
+    route: ReviewRoute,
+  },
+  {
+    path: "/meta",
+    route: MetaRoute,
   },
 ];
 
