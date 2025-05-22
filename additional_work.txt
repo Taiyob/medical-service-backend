@@ -1,0 +1,11 @@
+1. Patient jokon pay kortese, tokon invoice er maddhome ekta mail pathano
+2. Apointment korle: 1. shate shate mail notification, je se apoointment nise  (eigolar jonno node corn ba cron job use kora jai, orthat ei package diye schedule kora je apoointment er 30 min age mail jabe)
+                     2. appointment er 30 min age take mail er maddhome notification pathano (eigolar jonno node corn ba cron job use kora jai, orthat ei package diye schedule kora je apoointment er 30 min age mail jabe)
+
+
+
+
+
+            Suggestions:
+            ER-Diagrame banano(besi besi practice)
+            Raw Query(For SQL, POSTGreSQL): Fuctional Dependency, Tgigger toiri kora, advance query         
